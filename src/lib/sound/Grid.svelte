@@ -1,11 +1,22 @@
 <script>
     import GridItem from './GridItem.svelte';
+    import {createEventDispatcher} from "svelte"
+    const dispatch = createEventDispatcher();
+
     export let sounds;
+    export let popupState;
+    
+    let items = sounds.items;
+    function dispatchItemData(data){
+        dispatch('itemData', data);
+        
+    }
+
 </script>
 
 <section class="grid">
-    {#each sounds as sound}
-        <GridItem {sound}/>
+    {#each items as sound}
+        <GridItem on:editPopup={dispatchItemData} {popupState} {sound} />
     {/each}
 </section>
 

@@ -1,5 +1,14 @@
 <script>
+    import { createEventDispatcher } from 'svelte';
+
+    const dispatch = createEventDispatcher();
+    
     let isOpen = false;
+
+    function openPopup(mode){
+        dispatch('openPopup', {mode: mode});
+    }
+    
 </script>
 
 <div class="menu">
@@ -8,10 +17,10 @@
             <div on:click={(e) => {isOpen = !isOpen}} class="menu-item" >
                 <img src="/Menu.svg" alt="menu icon" />
             </div>
-            <div class="menu-item" >
+            <div class="menu-item" on:click={() => {openPopup('edit')}}>
                 <img src="/Edit.svg" alt="menu icon" />
             </div>
-            <div class="menu-item" >
+            <div class="menu-item" on:click={() => {openPopup('upload')}}>
                 <img src="/Upload.svg" alt="menu icon" />
             </div>
             

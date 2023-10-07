@@ -1,21 +1,52 @@
 <script>
     import Grid from '../lib/sound/Grid.svelte';
     import Menu from '../lib/menu/Menu.svelte';
+    import Popup from '../lib/popup/Popup.svelte';
 
-    let sounds = ['epic.swf_1', 'nigga', 'pornhub-community-intro', 'shut-the-fuck-up', 'windows_xp_shutdown']
+    import soundRef from '../lib/index.js';
+    import {listAll} from 'firebase/storage';
+
+    let sounds = listAll(soundRef);
+    let popupState = 'closed';
+    let audioRef;
+    
+    function handlePopup(event){
+        switch (event.detail.mode) {
+            case 'edit':
+                popupState = 'edit';
+                break;
+            case 'upload':
+                popupState = 'upload';
+                break;
+            case 'close':
+                popupState = 'closed';
+                break;
+            default:
+                popupState = 'closed';
+                break;
+        }
+    }
+
+    function handleItemData(data){
+        handlePopup(data.detail);
+        audioRef = data.detail.detail.audioReference;
+    }
 </script>
 
 <main>
-    <Menu />
+    <Menu on:openPopup={handlePopup} />
     <h1>Future Ready Design</h1>
     <h2>Soundboard</h2>
-    <Grid {sounds}/>
+    {#await sounds}
+        <p>Loading</p>
+    {:then sounds}
+        <Grid on:itemData={handleItemData} {popupState} {sounds}/>
+    {/await}
+    <Popup {audioRef} {popupState} on:closePopup={handlePopup}/>
 </main>
 
-
-
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;900&display=swap');
    
     main {
         display: flex;
